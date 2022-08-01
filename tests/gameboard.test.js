@@ -161,4 +161,33 @@ test('Gameboard: sink one ship', () => {
   expect(gameboard.board.e4()).toBe(true);
 });
 
-test.todo('Gameboard: receiveAttack');
+test('Gameboard: receiveAttack hit a ship', () => {
+  const gameboard = Gameboard();
+  expect(
+    gameboard.place({ start: 'e3', direction: 'horizontal', length: 2 })
+  ).toBe(true);
+  expect(gameboard.receiveAttack('e3')).toBe('hit');
+  expect(gameboard.receiveAttack('e4')).toBe('allSunk');
+  expect(gameboard.board.e3).toBe('hit');
+  expect(gameboard.board.e4).toBe('hit');
+});
+
+test('Gameboard: receiveAttack miss a ship', () => {
+  const gameboard = Gameboard();
+  expect(gameboard.receiveAttack('a1')).toBe('miss');
+  expect(gameboard.board.a1).toBe('miss');
+});
+
+test('Gameboard: receiveAttack hit a ship', () => {
+  const gameboard = Gameboard();
+  expect(
+    gameboard.place({ start: 'e3', direction: 'horizontal', length: 2 })
+  ).toBe(true);
+  expect(
+    gameboard.place({ start: 'f3', direction: 'horizontal', length: 2 })
+  ).toBe(true);
+  expect(gameboard.receiveAttack('e3')).toBe('hit');
+  expect(gameboard.receiveAttack('e4')).toBe('sunk');
+  expect(gameboard.receiveAttack('f3')).toBe('hit');
+  expect(gameboard.receiveAttack('f4')).toBe('allSunk');
+});

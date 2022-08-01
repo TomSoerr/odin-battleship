@@ -46,8 +46,31 @@ export default function Gameboard() {
     return true;
   };
 
+  const checkAllSunk = function checkIfAllShipsHaveSunk() {
+    return Object.values(board).every(
+      (element) => typeof element !== 'function'
+    );
+  };
+
+  const receiveAttack = function receiveAttack(coordinates) {
+    if (typeof board[coordinates] === 'function') {
+      const isSunk = board[coordinates]();
+      board[coordinates] = 'hit';
+      if (isSunk) {
+        if (checkAllSunk()) {
+          return 'allSunk';
+        }
+        return 'sunk';
+      }
+      return 'hit';
+    }
+    board[coordinates] = 'miss';
+    return 'miss';
+  };
+
   return {
     board,
     place,
+    receiveAttack,
   };
 }
