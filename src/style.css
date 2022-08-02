@@ -117,6 +117,22 @@
   border-radius: 1rem;
   margin: 4rem auto;
   width: min-content;
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+}
+
+.select {
+  position: relative;
+}
+
+.select:hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--col-2);
 }
 
 @media only screen and (max-width: 600px) {

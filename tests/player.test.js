@@ -47,3 +47,16 @@ test('Player: test attack', () => {
   player.attack({ gameboard, coordinates: 'a1' });
   expect(gameboard.board.a1).toBe('miss');
 });
+
+test('Player: place all ships', () => {
+  const player = Player();
+  const generateShips = player.placeShips();
+  expect(generateShips.next().value).toBe('Carrier');
+  expect(
+    generateShips
+      .next({ start: 'a1', direction: 'vertical' })
+      .value({ start: 'a1', direction: 'vertical' })
+  ).toBe(true);
+
+  expect(generateShips.next().done).toBe(true);
+});

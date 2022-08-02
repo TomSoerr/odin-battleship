@@ -55,20 +55,32 @@ export default function Dom() {
     content.append(header, boardsContainer, footer);
   };
 
-  const buildPlaceShipPopup = function buildPlaceShipPopup() {
+  const buildPlaceShipPopup = function buildPlaceShipPopup(placeShips) {
     const header = create('h2');
     header.textContent = 'Place your ships';
 
     const shipName = create('p');
-    shipName.textContent = 'testName';
+    shipName.textContent = 'some';
 
+    let vertical = true;
     const rotateButton = create('button');
     rotateButton.id = 'rotate-button';
-    rotateButton.textContent = 'Rotate Ship';
+    rotateButton.textContent = 'Rotate';
+    rotateButton.addEventListener('click', () => {
+      vertical = !vertical;
+    });
 
     const selectBoardContainer = create();
     selectBoardContainer.classList.add('gameboard');
-    buildBoard(selectBoardContainer);
+    const selectBoard = {};
+    buildBoard(selectBoardContainer, selectBoard);
+
+    const place = () => {};
+
+    Object.entries(selectBoard).forEach(([key, value]) => {
+      value.classList.add('select');
+      value.addEventListener('click', () => place(key));
+    });
 
     const popupContainer = create();
     popupContainer.id = 'popup';
@@ -81,10 +93,12 @@ export default function Dom() {
     content.append(popupBackgroundContainer);
   };
 
-  (function init() {
-    buildMainPage();
-    buildPlaceShipPopup();
-  })();
+  // render function
+
+  return {
+    buildMainPage,
+    buildPlaceShipPopup,
+  };
 }
 
 // TODO:

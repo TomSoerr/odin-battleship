@@ -1,4 +1,8 @@
+import Gameboard from './gameboard';
+
 export default function Player() {
+  const board = Gameboard();
+
   const attack = function attackEnemyGameboard({
     gameboard,
     coordinates = null,
@@ -14,7 +18,15 @@ export default function Player() {
       gameboard.receiveAttack(coordinates);
     }
   };
+  const placeShips = function* placeShipsOnGameboard() {
+    yield 'Carrier';
+    yield (obj) => board.place({ ...obj, length: 5 });
+  };
+
   return {
     attack,
+    receiveAttack: board.receiveAttack,
+    board: board.board,
+    placeShips,
   };
 }
