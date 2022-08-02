@@ -1,5 +1,9 @@
 :root {
-  --font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  --font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,
+  Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  --col-1: white;
+  --col-2: black;
+  --col-3: rgb(255, 163, 163);
 }
 
 *, *::before, *::after {
@@ -12,6 +16,131 @@
   font-family: var(--font-family);
   width: 100vw;
   min-height: 100vh;
-  color: rgb(0, 255, 0);
-  background-color: black;
+  color: var(--col-2);
+  background-color: var(--col-1);
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  justify-items: center;
+  padding: 4rem;
+  gap: 4rem;
+  position: relative;
+}
+
+/* MAIN PAGE */
+
+#header {
+  grid-column: 1 / -1;
+  font-size: 4rem;
+}
+
+#footer {
+  grid-column: 1 / -1;
+  align-self: end;
+  color: var(--col-2);
+}
+
+#footer > a {
+  color: var(--col-2);
+}
+
+#gameboard-wrapper {
+  display: grid;
+  gap: 4rem;
+  justify-items: center;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+}
+
+.gameboard {
+  display: grid;
+  grid-auto-rows: 1fr;
+  border: thin solid var(--col-2);
+  width: 20rem;
+  height: 20rem;
+}
+
+.board-cell {
+  border: thin solid var(--col-2);
+  position: relative;
+}
+
+.board-cell.hit::before,
+.board-cell.water::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.board-cell.hit::before {
+  background-color: var(--col-1);
+  clip-path: polygon(20% 10%, 10% 20%, 40% 50%, 10% 80%, 20% 90%, 50% 60%, 80%
+  90%, 90% 80%, 60% 50%, 90% 20%, 80% 10%, 50% 40%);
+}
+
+.board-cell.water::before {
+  background-color: var(--col-2);
+  clip-path: polygon(10% 80%, 20% 90%, 90% 20%, 80% 10%);
+}
+
+.board-cell.ship {
+  background-color: var(--col-2);
+}
+
+.board-cell.enemy:hover {
+  background-color: var(--col-3);
+  cursor: pointer;
+}
+
+.board-row {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+  grid-auto-columns: 1fr;
+}
+
+/* POPUP TO PLACE SHIPS */
+
+#popup-background {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(97, 98, 117, 0.554);
+  /* margin-top: -4rem; */
+}
+
+#popup {
+  background-color: var(--col-1);
+  padding: 4rem;
+  border-radius: 1rem;
+  margin: 4rem auto;
+  width: min-content;
+}
+
+@media only screen and (max-width: 600px) {
+  :root {
+    font-size: 0.9rem;
+  }
+
+  .gameboard {
+    width: 15rem;
+    height: 15rem;
+  }
+
+  #content {
+    padding: 1rem;
+    gap: 2rem;
+  }
+
+  #gameboard-wrapper {
+    gap: 2rem;
+  }
+
+  #popup {
+    margin: 1rem auto;
+    padding: 2rem;
+    border-radius: 0.5rem;
+  }
 }

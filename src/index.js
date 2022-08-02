@@ -5,16 +5,19 @@ import './style.css';
 
 Dom();
 
-function Gameloop() {
+////////////////////////////////
+function game() {
   const computer = Player();
   const computerGameboard = Gameboard();
   const player = Player();
   const playerGameboard = Gameboard();
 
-  let playing = true;
-  let currentPlayer = player;
-
+  // return confirm('Want to play again');
   return false;
 }
 
-export default Gameloop;
+let playing = true;
+while (playing) {
+  playing = game();
+}
+window.close();
