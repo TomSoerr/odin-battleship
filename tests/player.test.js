@@ -51,12 +51,41 @@ test('Player: test attack', () => {
 test('Player: place all ships', () => {
   const player = Player();
   const generateShips = player.placeShips();
-  expect(generateShips.next().value).toBe('Carrier');
-  expect(
-    generateShips
-      .next({ start: 'a1', direction: 'vertical' })
-      .value({ start: 'a1', direction: 'vertical' })
-  ).toBe(true);
+  let value;
+  value = generateShips.next().value;
+  expect(value[0]).toBe('Carrier');
+  expect(value[1]).toBe(5);
+  expect(typeof value[2]).toBe('function');
+
+  value = generateShips.next().value;
+  expect(value[0]).toBe('Battleship');
+  expect(value[1]).toBe(4);
+  expect(typeof value[2]).toBe('function');
+
+  value = generateShips.next().value;
+  expect(value[0]).toBe('Cruiser');
+  expect(value[1]).toBe(3);
+  expect(typeof value[2]).toBe('function');
+
+  value = generateShips.next().value;
+  expect(value[0]).toBe('Destroyer');
+  expect(value[1]).toBe(2);
+  expect(typeof value[2]).toBe('function');
+
+  value = generateShips.next().value;
+  expect(value[0]).toBe('Destroyer');
+  expect(value[1]).toBe(2);
+  expect(typeof value[2]).toBe('function');
+
+  value = generateShips.next().value;
+  expect(value[0]).toBe('Submarine');
+  expect(value[1]).toBe(1);
+  expect(typeof value[2]).toBe('function');
+
+  value = generateShips.next().value;
+  expect(value[0]).toBe('Submarine');
+  expect(value[1]).toBe(1);
+  expect(typeof value[2]).toBe('function');
 
   expect(generateShips.next().done).toBe(true);
 });

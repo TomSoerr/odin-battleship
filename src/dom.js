@@ -5,11 +5,14 @@ export default function Dom() {
   content.id = 'content';
   document.body.append(content);
 
+  const y = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+  const x = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
   const buildBoard = function buildBoard(boardContainer, board = null) {
-    ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'].forEach((row) => {
+    y.forEach((row) => {
       const rowContainer = create();
       rowContainer.classList.add('board-row');
-      ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].forEach((column) => {
+      x.forEach((column) => {
         const cell = create();
         if (board !== null) board[row + column] = cell;
         cell.classList.add('board-cell');
@@ -17,6 +20,33 @@ export default function Dom() {
       });
       boardContainer.append(rowContainer);
     });
+  };
+
+  // TODO: this function could be put in its own file later
+  const getShipCoordinates = function getShipCoordinates({
+    start,
+    direction,
+    length,
+  }) {
+    const coordinates = [];
+    const { letter, number } = start.match(
+      /^(?<letter>\w)(?<number>\d{1,2})$/
+    ).groups;
+    let yStart = y.indexOf(letter);
+    let xStart = x.indexOf(number);
+    for (let a = 0; a < length; a += 1) {
+      if (yStart < 10 && xStart < 10) {
+        coordinates.push(y[yStart] + x[xStart]);
+        if (direction === 'vertical') {
+          yStart += 1;
+        } else if (direction === 'horizontal') {
+          xStart += 1;
+        }
+      } else {
+        break;
+      }
+    }
+    return coordinates;
   };
 
   const buildMainPage = function buildMainPage() {
@@ -55,14 +85,26 @@ export default function Dom() {
     content.append(header, boardsContainer, footer);
   };
 
-  const buildPlaceShipPopup = function buildPlaceShipPopup(placeShips) {
+  // build the popup to place the ships on the board
+  const buildPlaceShipPopup = function buildPlaceShipPopup(
+    placeShips,
+    startGame
+  ) {
+    const popupContainer = create();
+    popupContainer.id = 'popup';
+    const popupBackgroundContainer = create();
+    popupBackgroundContainer.id = 'popup-background';
+
     const header = create('h2');
     header.textContent = 'Place your ships';
 
     const shipName = create('p');
-    shipName.textContent = 'some';
+    let length;
+    let place;
+    [shipName.textContent, length, place] = placeShips.next().value;
 
-    let vertical = true;
+    // to place the ships vertical and horizontal
+    let vertical = false;
     const rotateButton = create('button');
     rotateButton.id = 'rotate-button';
     rotateButton.textContent = 'Rotate';
@@ -70,24 +112,55 @@ export default function Dom() {
       vertical = !vertical;
     });
 
+    // board where the ships are placed on 10x10
     const selectBoardContainer = create();
     selectBoardContainer.classList.add('gameboard');
-    const selectBoard = {};
+    let selectBoard = {};
     buildBoard(selectBoardContainer, selectBoard);
 
-    const place = () => {};
-
+    // add an eventListener on each board cell with a linked function from
+    // the playerBoard. The getShipCoordinates will return a array with
+    // coordinates that should be colored
     Object.entries(selectBoard).forEach(([key, value]) => {
       value.classList.add('select');
-      value.addEventListener('click', () => place(key));
+      value.addEventListener('click', () => {
+        const direction = vertical ? 'vertical' : 'horizontal';
+        if (place({ start: key, direction })) {
+          getShipCoordinates({ length, direction, start: key }).forEach(
+            (coordinates) => {
+              selectBoard[coordinates].classList.add('ship');
+            }
+          );
+          const genValue = placeShips.next().value;
+          // check if all ships are placed
+          if (genValue !== undefined) {
+            [shipName.textContent, length, place] = genValue;
+          } else {
+            popupBackgroundContainer.remove();
+            selectBoard = null;
+            startGame();
+          }
+        }
+      });
+      value.addEventListener('mouseenter', () => {
+        const direction = vertical ? 'vertical' : 'horizontal';
+        getShipCoordinates({ length, direction, start: key }).forEach(
+          (coordinates) => {
+            selectBoard[coordinates].classList.add('hover');
+          }
+        );
+      });
+      value.addEventListener('mouseleave', () => {
+        const direction = vertical ? 'vertical' : 'horizontal';
+        getShipCoordinates({ length, direction, start: key }).forEach(
+          (coordinates) => {
+            selectBoard[coordinates].classList.remove('hover');
+          }
+        );
+      });
     });
 
-    const popupContainer = create();
-    popupContainer.id = 'popup';
     popupContainer.append(header, shipName, rotateButton, selectBoardContainer);
-
-    const popupBackgroundContainer = create();
-    popupBackgroundContainer.id = 'popup-background';
     popupBackgroundContainer.append(popupContainer);
 
     content.append(popupBackgroundContainer);

@@ -15,7 +15,7 @@ export default function Gameboard() {
   const place = function placeShip({ start, direction, length }) {
     const ship = Ship({ length });
     const { letter, number } = start.match(
-      /^(?<letter>\w)(?<number>\d)$/
+      /^(?<letter>\w)(?<number>\d{1,2})$/
     ).groups;
     let yStart = y.indexOf(letter);
     let xStart = x.indexOf(number);

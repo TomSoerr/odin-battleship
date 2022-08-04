@@ -8,7 +8,9 @@ const computer = Player();
 
 const dom = Dom();
 dom.buildMainPage();
-dom.buildPlaceShipPopup(player.placeShips());
+dom.buildPlaceShipPopup(player.placeShips(), () => {
+  console.log(player.board);
+});
 
 ////////////////////////////////
 // function game() {
