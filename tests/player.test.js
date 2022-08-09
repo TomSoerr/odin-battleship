@@ -2,42 +2,31 @@
 import Player from '../src/player';
 import Gameboard from '../src/gameboard';
 
-test('Player: test random attack', () => {
-  const gameboard = Gameboard();
+test('Player: test random attack 1', () => {
   const player = Player();
+  const gameboard = Gameboard();
 
-  expect(
-    gameboard.place({ start: 'a1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'b1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'c1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'd1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'e1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'f1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'g1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'h1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'i1', direction: 'horizontal', length: 10 })
-  ).toBe(true);
-  expect(
-    gameboard.place({ start: 'j1', direction: 'horizontal', length: 9 })
-  ).toBe(true);
-  player.attack({ gameboard });
+  Object.entries(gameboard.board).forEach(([key, value]) => {
+    if (key !== 'j10') {
+      gameboard.board[key] = 'hit';
+    }
+  });
+  expect(player.attack({ gameboard })).toBe('miss');
   expect(gameboard.board.j10).toBe('miss');
+});
+
+test('Player: test random attack 1', () => {
+  const player = Player();
+  const gameboard = Gameboard();
+
+  Object.entries(gameboard.board).forEach(([key, value]) => {
+    if (key !== 'j10') {
+      gameboard.board[key] = 'miss';
+    }
+  });
+  expect(gameboard.place({ start: 'j10', direction: 'horizontal', length: 1 }));
+  expect(player.attack({ gameboard })).toBe('allSunk');
+  expect(gameboard.board.j10).toBe('hit');
 });
 
 test('Player: test attack', () => {
@@ -88,4 +77,18 @@ test('Player: place all ships', () => {
   expect(typeof value[2]).toBe('function');
 
   expect(generateShips.next().done).toBe(true);
+});
+
+test('Player: placeRandomShips', () => {
+  const player = Player();
+  expect(player.placeRandomShips()).toBe(true);
+
+  expect(
+    Object.values(player.board).reduce((prev, curr) => {
+      if (typeof curr === 'function') {
+        prev += 1;
+      }
+      return prev;
+    }, 0)
+  ).toBe(18);
 });

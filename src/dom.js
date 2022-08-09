@@ -5,6 +5,9 @@ export default function Dom() {
   content.id = 'content';
   document.body.append(content);
 
+  const playerBoard = {};
+  const enemyBoard = {};
+
   const y = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
   const x = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
@@ -49,26 +52,27 @@ export default function Dom() {
     return coordinates;
   };
 
-  const buildMainPage = function buildMainPage() {
+  const buildMainPage = function buildMainPage(attack) {
     const header = create('h1');
     header.id = 'header';
     header.textContent = 'Battleship';
 
     const playerBoardContainer = create();
     playerBoardContainer.classList.add('gameboard');
-    const playerBoard = {};
     buildBoard(playerBoardContainer, playerBoard);
-
-    playerBoard.a1.classList.add('hit', 'ship');
-    playerBoard.a2.classList.add('water');
 
     const enemyBoardContainer = create();
     enemyBoardContainer.classList.add('gameboard');
-    const enemyBoard = {};
     buildBoard(enemyBoardContainer, enemyBoard);
+
     Object.entries(enemyBoard).forEach(([key, value]) => {
       value.classList.add('enemy');
-      // value.addEventListener(() => enemy(key));
+      function clickEnemyCell() {
+        attack(key);
+        value.classList.remove('enemy');
+        value.removeEventListener('click', clickEnemyCell);
+      }
+      value.addEventListener('click', clickEnemyCell);
     });
 
     const boardsContainer = create();
@@ -86,10 +90,7 @@ export default function Dom() {
   };
 
   // build the popup to place the ships on the board
-  const buildPlaceShipPopup = function buildPlaceShipPopup(
-    placeShips,
-    startGame
-  ) {
+  const buildPlaceShipPopup = function buildPlaceShipPopup(placeShips, render) {
     const popupContainer = create();
     popupContainer.id = 'popup';
     const popupBackgroundContainer = create();
@@ -138,7 +139,7 @@ export default function Dom() {
           } else {
             popupBackgroundContainer.remove();
             selectBoard = null;
-            startGame();
+            render();
           }
         }
       });
@@ -166,20 +167,42 @@ export default function Dom() {
     content.append(popupBackgroundContainer);
   };
 
-  // render function
+  const render = function renderGameboards(player, computer) {
+    Object.entries(player).forEach(([key, value]) => {
+      switch (true) {
+        case typeof value === 'function':
+          playerBoard[key].classList.add('ship');
+          break;
+        case value === 'miss':
+          playerBoard[key].classList.add('water');
+          break;
+        case value === 'hit':
+          playerBoard[key].classList.add('hit');
+          break;
+        default:
+      }
+    });
+    Object.entries(computer).forEach(([key, value]) => {
+      if (value === 'miss') {
+        enemyBoard[key].classList.add('water');
+      } else if (value === 'hit') {
+        enemyBoard[key].classList.add('ship');
+        enemyBoard[key].classList.add('hit');
+      }
+    });
+    console.log(computer);
+  };
+
+  const remove = () => {
+    while (document.body.firstChild) {
+      document.body.removeChild(document.body.lastChild);
+    }
+  };
 
   return {
     buildMainPage,
     buildPlaceShipPopup,
+    render,
+    remove,
   };
 }
-
-// TODO:
-// add event listeners to one board
-// if a ship is on a cell there should be a class added
-// after each turn the classes are rerendered
-// the player obj needs to call the rerender
-// the one board must be able to call the player attack function
-// after the attack is called the event listener should be deleted
-// popup to place the board with the real gameboard object
-// computer player obj needs to place the ships randomly

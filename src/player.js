@@ -9,16 +9,16 @@ export default function Player() {
   }) {
     if (coordinates === null) {
       const freeCoordinates = Object.entries(gameboard.board)
-        .filter(([key, value]) => !value)
+        .filter(([key, value]) => value !== 'hit' && value !== 'miss')
         .map(([key, value]) => key);
-      gameboard.receiveAttack(
+      return gameboard.receiveAttack(
         freeCoordinates[Math.floor(Math.random() * freeCoordinates.length)]
       );
-    } else {
-      gameboard.receiveAttack(coordinates);
     }
+    return gameboard.receiveAttack(coordinates);
   };
 
+  // generator function that returns each ship
   const f = (l) => (obj) => board.place({ ...obj, length: l });
   const placeShips = function* placeShipsOnGameboard() {
     yield ['Carrier', 5, f(5)];
@@ -30,10 +30,36 @@ export default function Player() {
     yield ['Submarine', 1, f(1)];
   };
 
+  // function that places all ships randomly the brute force way
+  const placeRandomShips = function placeRandomShipsForComputerPlayer() {
+    const generateShips = placeShips();
+    const direction = ['horizontal', 'vertical'];
+    const x = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+    const y = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+
+    while (true) {
+      const obj = generateShips.next();
+      const { value, done } = obj;
+      if (done) break;
+      const [, , placeFunction] = value;
+
+      let coords;
+      let dir;
+      do {
+        coords =
+          y[Math.floor(Math.random() * y.length)] +
+          x[Math.floor(Math.random() * x.length)];
+        dir = direction[Math.floor(Math.random() * direction.length)];
+      } while (!placeFunction({ start: coords, direction: dir }));
+    }
+    return true;
+  };
+
   return {
     attack,
     receiveAttack: board.receiveAttack,
     board: board.board,
     placeShips,
+    placeRandomShips,
   };
 }

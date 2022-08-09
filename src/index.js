@@ -1,30 +1,58 @@
-import Gameboard from './gameboard';
 import Player from './player';
 import Dom from './dom';
 import './style.css';
 
-const player = Player();
-const computer = Player();
+let player;
+let computer;
+let dom;
 
-const dom = Dom();
-dom.buildMainPage();
-dom.buildPlaceShipPopup(player.placeShips(), () => {
-  console.log(player.board);
-});
+const checkWinner = function checkForAWinner() {
+  if (
+    Object.values(player.board).reduce((prev, curr) => {
+      if (!prev) return false;
+      if (typeof curr === 'function') {
+        return false;
+      }
+      return true;
+    }, true)
+  ) {
+    alert('computer is the winner');
+    return true;
+  }
+  if (
+    Object.values(computer.board).reduce((prev, curr) => {
+      if (!prev) return false;
+      if (typeof curr === 'function') {
+        return false;
+      }
+      return true;
+    }, true)
+  ) {
+    alert('player is the winner');
+    return true;
+  }
+  return false;
+};
 
-////////////////////////////////
-// function game() {
-//   const computer = Player();
-//   const computerGameboard = Gameboard();
-//   const player = Player();
-//   const playerGameboard = Gameboard();
+const gameloop = function gameloop() {
+  player = Player();
+  computer = Player();
+  if (dom) dom.remove();
+  dom = Dom();
 
-//   // return confirm('Want to play again');
-//   return false;
-// }
+  dom.buildMainPage((coords) => {
+    player.attack({ gameboard: computer, coordinates: coords });
+    dom.render(player.board, computer.board);
+    if (checkWinner()) gameloop();
+    computer.attack({ gameboard: player });
+    dom.render(player.board, computer.board);
+    if (checkWinner()) gameloop();
+  });
 
-// let playing = true;
-// while (playing) {
-//   playing = game();
-// }
-// window.close();
+  dom.buildPlaceShipPopup(player.placeShips(), () => {
+    computer.placeRandomShips();
+    dom.render(player.board, computer.board);
+  });
+};
+
+gameloop();
