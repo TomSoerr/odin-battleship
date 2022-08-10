@@ -6,34 +6,6 @@ let player;
 let computer;
 let dom;
 
-const checkWinner = function checkForAWinner() {
-  if (
-    Object.values(player.board).reduce((prev, curr) => {
-      if (!prev) return false;
-      if (typeof curr === 'function') {
-        return false;
-      }
-      return true;
-    }, true)
-  ) {
-    alert('computer is the winner');
-    return true;
-  }
-  if (
-    Object.values(computer.board).reduce((prev, curr) => {
-      if (!prev) return false;
-      if (typeof curr === 'function') {
-        return false;
-      }
-      return true;
-    }, true)
-  ) {
-    alert('player is the winner');
-    return true;
-  }
-  return false;
-};
-
 const gameloop = function gameloop() {
   player = Player();
   computer = Player();
@@ -41,12 +13,25 @@ const gameloop = function gameloop() {
   dom = Dom();
 
   dom.buildMainPage((coords) => {
-    player.attack({ gameboard: computer, coordinates: coords });
+    let attackReturn = player.attack({
+      gameboard: computer,
+      coordinates: coords,
+    });
     dom.render(player.board, computer.board);
-    if (checkWinner()) gameloop();
-    computer.attack({ gameboard: player });
+    if (attackReturn === 'allSunk') {
+      dom.announceWinner(`The player is the winner`);
+      setTimeout(() => {
+        gameloop();
+      }, 5000);
+    }
+    attackReturn = computer.attack({ gameboard: player });
     dom.render(player.board, computer.board);
-    if (checkWinner()) gameloop();
+    if (attackReturn === 'allSunk') {
+      dom.announceWinner(`The computer is the winner`);
+      setTimeout(() => {
+        gameloop();
+      }, 5000);
+    }
   });
 
   dom.buildPlaceShipPopup(player.placeShips(), () => {

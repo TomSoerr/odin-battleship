@@ -25,7 +25,6 @@ export default function Dom() {
     });
   };
 
-  // TODO: this function could be put in its own file later
   const getShipCoordinates = function getShipCoordinates({
     start,
     direction,
@@ -190,7 +189,6 @@ export default function Dom() {
         enemyBoard[key].classList.add('hit');
       }
     });
-    console.log(computer);
   };
 
   const remove = () => {
@@ -199,10 +197,21 @@ export default function Dom() {
     }
   };
 
+  const announceWinner = function announceWinner(text) {
+    const winner = create();
+    winner.textContent = text;
+    winner.id = 'winner';
+    content.append(winner);
+    setTimeout(() => {
+      winner.classList.add('show');
+    }, 1);
+  };
+
   return {
     buildMainPage,
     buildPlaceShipPopup,
     render,
     remove,
+    announceWinner,
   };
 }
