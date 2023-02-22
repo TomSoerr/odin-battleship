@@ -11,4 +11,4 @@ This project has:
 ## Links
 - [Live Preview](https://tomsoerr.github.io/odin-battleship/)
 - Link to the [Assignment](https://www.theodinproject.com/lessons/node-path-javascript-battleship)
-- This is my last project for now
+- See my next [Project](https://github.com/TomSoerr/rebellinnen)
