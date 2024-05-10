@@ -9,6 +9,8 @@ This project has:
 - a computer to play against
 
 ## Links
+
+- [Imprint](https://tomsoerr.github.io/#/impressum)
 - [Live Preview](https://tomsoerr.github.io/odin-battleship/)
 - Link to the [Assignment](https://www.theodinproject.com/lessons/node-path-javascript-battleship)
 - See my next [Project](https://github.com/TomSoerr/rebellinnen)
